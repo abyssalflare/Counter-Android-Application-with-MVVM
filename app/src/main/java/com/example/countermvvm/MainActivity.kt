@@ -23,19 +23,24 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.countermvvm.ui.theme.CounterMVVMTheme
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            //initialize the viewmodel object
+            val viewModel: CounterViewModel = viewModel()
             CounterMVVMTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    TheCounterApp()
+                    //pass in the viewmodel to the app composable
+                    TheCounterApp(viewModel)
                 }
             }
         }
@@ -43,33 +48,25 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun TheCounterApp()
+fun TheCounterApp(viewModel: CounterViewModel)//the app composable now takes in our viewmodel
 {
-    val count = remember { mutableStateOf(0) }
-    fun increment()
-    {
-        count.value++;
-    }
-    fun decrement()
-    {
-        count.value--;
-    }
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Count: ${count.value}",
+            text = "Count: ${viewModel.count.value}", //as you can see, the Text UI element is now binded to the property
+                                                      //of our viewmodel
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(16.dp))
         Row {
-            Button(onClick = {increment()}) {
+            Button(onClick = {viewModel.increment()}) { //button ui element binded to viewmodel's property
                 Text("Increment")
             }
-            Button(onClick = {decrement()}) {
+            Button(onClick = {viewModel.decrement()}) { //button ui element binded to viewmodel's property
                 Text("Decrement")
             }
         }
